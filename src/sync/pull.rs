@@ -66,7 +66,11 @@ pub async fn run(board_id_override: Option<String>) -> Result<()> {
     // Normalize Trello's huge float positions to 1-based ordinal ranks so the
     // toml stays human-readable. Trello accepts integer positions on push.
     let mut sorted_lists: Vec<_> = lists.into_iter().filter(|l| !l.closed).collect();
-    sorted_lists.sort_by(|a, b| a.pos.partial_cmp(&b.pos).unwrap_or(std::cmp::Ordering::Equal));
+    sorted_lists.sort_by(|a, b| {
+        a.pos
+            .partial_cmp(&b.pos)
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
 
     for (rank, list) in sorted_lists.into_iter().enumerate() {
         let list_slug = slugify(&list.name);
