@@ -1,0 +1,37 @@
+[package]
+name = "rbxtrello"
+version = "0.1.0"
+edition = "2024"
+authors = ["itzbbbbas"]
+description = "Sync a Trello board declaratively from a TOML file. Sibling to rbxmonet."
+license = "MIT"
+repository = "https://github.com/itzbbbbas/rbxtrello"
+readme = "README.md"
+include = ["**/*.rs", "src/templates/**/*"]
+
+[[bin]]
+name = "rbxtrello"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4.5", features = ["derive", "env"] }
+color-eyre = "0.6"
+crossterm = { version = "0.29", features = ["event-stream"] }
+dotenv = "0.15"
+env_logger = "0.11"
+futures = "0.3"
+lazy_static = "1.5"
+log = "0.4"
+ratatui = "0.30"
+reqwest = { version = "0.12", features = ["json", "gzip", "deflate", "brotli"] }
+reqwest-middleware = { version = "0.4", features = ["json"] }
+reqwest-retry = "0.8"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
+toml = "0.9"
+toml_edit = "0.24"
+
+[dev-dependencies]
+pretty_assertions = "1"

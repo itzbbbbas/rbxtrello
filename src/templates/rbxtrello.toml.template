@@ -1,0 +1,35 @@
+[metadata]
+board_name = "My Game Wiki"
+# board_id = "abc123"               # written by pull/sync; omit on first sync to create board
+
+# MARK: Labels — referenced by slug from card.labels = ["common"]
+# Valid colors: yellow, purple, blue, red, green, orange, black, sky, pink, lime
+
+# [labels.common]
+# color = "sky"
+# name  = "Common"
+
+# [labels.rare]
+# color = "blue"
+# name  = "Rare"
+
+# MARK: Lists
+
+# [lists.mechanics]
+# name     = "Mechanics"
+# position = 1
+# managed  = false                   # human-curated, never archive orphans
+
+# [lists.mechanics.cards.round_flow]
+# name = "Round Flow"
+# desc = "Intermission → Map Prepare → Gameplay → End Round."
+
+# [lists.brainrots]
+# name     = "Brainrots"
+# position = 2
+# managed  = true                    # default; archive orphans not in toml
+
+# [lists.brainrots.cards.noobini_pizzanini]
+# name   = "Noobini Pizzanini"
+# desc   = "Common starter brainrot."
+# labels = ["common"]

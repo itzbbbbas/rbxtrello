@@ -1,0 +1,47 @@
+name: CI
+
+on:
+    pull_request:
+    push:
+        branches: [main]
+
+jobs:
+    check:
+        name: Check (${{ matrix.kind }})
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                kind: [fmt, clippy, test, build]
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install Rust
+              uses: dtolnay/rust-toolchain@stable
+              with:
+                  components: rustfmt, clippy
+
+            - name: Cache cargo
+              uses: actions/cache@v4
+              with:
+                  path: |
+                      ~/.cargo/registry
+                      ~/.cargo/git
+                      target
+                  key: ubuntu-cargo-${{ matrix.kind }}-${{ hashFiles('**/Cargo.lock') }}
+
+            - name: cargo fmt --check
+              if: matrix.kind == 'fmt'
+              run: cargo fmt --all -- --check
+
+            - name: cargo clippy
+              if: matrix.kind == 'clippy'
+              run: cargo clippy --all-targets --locked -- -D warnings
+
+            - name: cargo test
+              if: matrix.kind == 'test'
+              run: cargo test --all --locked
+
+            - name: cargo build
+              if: matrix.kind == 'build'
+              run: cargo build --locked
