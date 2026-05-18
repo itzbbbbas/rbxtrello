@@ -181,10 +181,10 @@ async fn apply_ops(
                     .filter_map(|s| label_id_by_slug.get(s).cloned())
                     .collect();
                 let card = trello::create_card(&list_id, &name, &desc, &label_ids).await?;
-                if let Some(list) = local.lists.get_mut(&list_slug) {
-                    if let Some(def) = list.cards.get_mut(&card_slug) {
-                        def.id = Some(card.id);
-                    }
+                if let Some(list) = local.lists.get_mut(&list_slug)
+                    && let Some(def) = list.cards.get_mut(&card_slug)
+                {
+                    def.id = Some(card.id);
                 }
                 info!("  + card {list_slug}/{card_slug}");
             }
@@ -204,7 +204,11 @@ async fn apply_ops(
                 trello::update_card(&id, &new_name, &new_desc, &label_ids).await?;
                 info!("  ~ card {list_slug}/{card_slug}");
             }
-            DiffOp::ArchiveCard { id, list_slug, name } => {
+            DiffOp::ArchiveCard {
+                id,
+                list_slug,
+                name,
+            } => {
                 trello::archive_card(&id).await?;
                 info!("  - archived {list_slug}: \"{name}\"");
             }

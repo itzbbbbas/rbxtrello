@@ -8,8 +8,7 @@ fn parses_minimal_toml() {
 [metadata]
 board_name = "Test"
 "#;
-    let board: rbxtrello::sync::board::VCSBoard =
-        toml::from_str(src).expect("minimal toml parses");
+    let board: rbxtrello::sync::board::VCSBoard = toml::from_str(src).expect("minimal toml parses");
     assert_eq!(board.metadata.board_name, "Test");
     assert!(board.labels.is_empty());
     assert!(board.lists.is_empty());

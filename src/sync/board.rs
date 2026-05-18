@@ -101,8 +101,8 @@ impl VCSBoard {
     pub async fn load() -> anyhow::Result<Self> {
         let path = crate::sync::TOML_PATH;
         let text = crate::utils::read_to_string(path).await?;
-        let board: VCSBoard = toml::from_str(&text)
-            .map_err(|e| anyhow::anyhow!("failed to parse {path}: {e}"))?;
+        let board: VCSBoard =
+            toml::from_str(&text).map_err(|e| anyhow::anyhow!("failed to parse {path}: {e}"))?;
         board.validate()?;
         Ok(board)
     }

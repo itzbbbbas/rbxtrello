@@ -4,8 +4,8 @@ use log::info;
 
 use crate::Result;
 use crate::api::trello;
-use crate::sync::board::{CardDef, LabelDef, ListDef, Metadata, VCSBoard};
 use crate::sync::TOML_PATH;
+use crate::sync::board::{CardDef, LabelDef, ListDef, Metadata, VCSBoard};
 use crate::utils::{self, slugify};
 
 pub async fn run(board_id_override: Option<String>) -> Result<()> {
@@ -129,7 +129,11 @@ pub async fn run(board_id_override: Option<String>) -> Result<()> {
             "Seeded {} lists, {} labels, {} cards",
             new_board.lists.len(),
             new_board.labels.len(),
-            new_board.lists.values().map(|l| l.cards.len()).sum::<usize>(),
+            new_board
+                .lists
+                .values()
+                .map(|l| l.cards.len())
+                .sum::<usize>(),
         );
     }
 

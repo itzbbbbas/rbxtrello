@@ -1,7 +1,7 @@
 use std::collections::{BTreeMap, HashMap, HashSet};
 
 use crate::api::model::{Card as RCard, Label as RLabel, List as RList};
-use crate::sync::board::{CardDef, LabelDef, ListDef, VCSBoard};
+use crate::sync::board::{LabelDef, ListDef, VCSBoard};
 
 /// One actionable change to apply to Trello.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -210,9 +210,7 @@ fn diff_cards_for_list(
             let mut sorted_old = existing.id_labels.clone();
             sorted_old.sort();
 
-            if existing.name != card.name
-                || existing.desc != card.desc
-                || sorted_old != sorted_new
+            if existing.name != card.name || existing.desc != card.desc || sorted_old != sorted_new
             {
                 ops.push(DiffOp::UpdateCard {
                     id: existing.id.clone(),
@@ -375,7 +373,8 @@ mod tests {
 
         let ops = compute_ops(&board, &remote);
         assert!(
-            !ops.iter().any(|op| matches!(op, DiffOp::ArchiveCard { .. })),
+            !ops.iter()
+                .any(|op| matches!(op, DiffOp::ArchiveCard { .. })),
             "unmanaged list must never archive: {ops:#?}"
         );
     }

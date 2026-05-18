@@ -47,7 +47,7 @@ impl ConfirmViewer {
 impl Terminal for ConfirmViewer {
     fn render(&mut self, frame: &mut Frame) {
         let area = frame.area();
-        let w = (area.width.min(60)).max(24);
+        let w = area.width.clamp(24, 60);
         let h = 7u16.min(area.height);
         let x = area.x + (area.width.saturating_sub(w)) / 2;
         let y = area.y + (area.height.saturating_sub(h)) / 2;
@@ -59,9 +59,7 @@ impl Terminal for ConfirmViewer {
         };
 
         frame.render_widget(Clear, modal);
-        let block = Block::default()
-            .title("Confirm Sync")
-            .borders(Borders::ALL);
+        let block = Block::default().title("Confirm Sync").borders(Borders::ALL);
 
         let yes = Span::raw("Y").style(Style::default().fg(Color::Green));
         let no = Span::raw("N").style(Style::default().fg(Color::Red));
