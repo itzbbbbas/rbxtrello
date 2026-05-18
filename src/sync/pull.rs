@@ -63,10 +63,12 @@ pub async fn run(board_id_override: Option<String>) -> Result<()> {
         .filter_map(|(slug, def)| def.id.clone().map(|id| (id, slug.clone())))
         .collect();
 
-    for list in lists {
-        if list.closed {
-            continue;
-        }
+    // Normalize Trello's huge float positions to 1-based ordinal ranks so the
+    // toml stays human-readable. Trello accepts integer positions on push.
+    let mut sorted_lists: Vec<_> = lists.into_iter().filter(|l| !l.closed).collect();
+    sorted_lists.sort_by(|a, b| a.pos.partial_cmp(&b.pos).unwrap_or(std::cmp::Ordering::Equal));
+
+    for (rank, list) in sorted_lists.into_iter().enumerate() {
         let list_slug = slugify(&list.name);
         let cards = trello::list_cards(&list.id).await?;
         let mut card_map = BTreeMap::new();
@@ -102,7 +104,7 @@ pub async fn run(board_id_override: Option<String>) -> Result<()> {
             list_slug,
             ListDef {
                 name: list.name,
-                position: Some(list.pos.round() as u32),
+                position: Some((rank + 1) as u32),
                 managed: true,
                 id: Some(list.id),
                 cards: card_map,
