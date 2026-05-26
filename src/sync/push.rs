@@ -171,6 +171,7 @@ async fn apply_ops(
                 name,
                 desc,
                 label_slugs,
+                complete,
             } => {
                 let Some(list_id) = list_id_by_slug.get(&list_slug).cloned() else {
                     warn!("  skipping card {card_slug} — list {list_slug} has no id yet");
@@ -180,7 +181,8 @@ async fn apply_ops(
                     .iter()
                     .filter_map(|s| label_id_by_slug.get(s).cloned())
                     .collect();
-                let card = trello::create_card(&list_id, &name, &desc, &label_ids).await?;
+                let card =
+                    trello::create_card(&list_id, &name, &desc, &label_ids, complete).await?;
                 if let Some(list) = local.lists.get_mut(&list_slug)
                     && let Some(def) = list.cards.get_mut(&card_slug)
                 {
@@ -195,13 +197,14 @@ async fn apply_ops(
                 new_name,
                 new_desc,
                 new_label_slugs,
+                new_complete,
                 ..
             } => {
                 let label_ids: Vec<String> = new_label_slugs
                     .iter()
                     .filter_map(|s| label_id_by_slug.get(s).cloned())
                     .collect();
-                trello::update_card(&id, &new_name, &new_desc, &label_ids).await?;
+                trello::update_card(&id, &new_name, &new_desc, &label_ids, new_complete).await?;
                 info!("  ~ card {list_slug}/{card_slug}");
             }
             DiffOp::ArchiveCard {

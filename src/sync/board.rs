@@ -61,6 +61,10 @@ fn default_managed() -> bool {
     true
 }
 
+fn is_false(b: &bool) -> bool {
+    !*b
+}
+
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct CardDef {
@@ -70,6 +74,8 @@ pub struct CardDef {
     /// Slugs referencing [labels.<slug>].
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub labels: Vec<String>,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub complete: bool,
     /// Trello ID — written back by sync/pull. Omit for new cards.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,

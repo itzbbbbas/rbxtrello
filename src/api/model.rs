@@ -35,6 +35,8 @@ pub struct Card {
     pub id_labels: Vec<String>,
     #[serde(default)]
     pub pos: f64,
+    #[serde(default, rename = "dueComplete")]
+    pub due_complete: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

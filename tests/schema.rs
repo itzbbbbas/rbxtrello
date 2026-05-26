@@ -134,3 +134,76 @@ labels = ["rare"]
         board2.lists["brainrots"].cards["x"].labels
     );
 }
+
+#[test]
+fn parses_complete_true() {
+    let src = r#"
+[metadata]
+board_name = "T"
+
+[lists.x]
+name = "X"
+
+[lists.x.cards.c]
+name = "C"
+complete = true
+"#;
+    let board: rbxtrello::sync::board::VCSBoard = toml::from_str(src).unwrap();
+    assert!(board.lists["x"].cards["c"].complete);
+    board.validate().unwrap();
+}
+
+#[test]
+fn complete_defaults_false() {
+    let src = r#"
+[metadata]
+board_name = "T"
+
+[lists.x]
+name = "X"
+
+[lists.x.cards.c]
+name = "C"
+"#;
+    let board: rbxtrello::sync::board::VCSBoard = toml::from_str(src).unwrap();
+    assert!(!board.lists["x"].cards["c"].complete);
+}
+
+#[test]
+fn roundtrip_preserves_complete() {
+    let src = r#"
+[metadata]
+board_name = "T"
+
+[lists.x]
+name = "X"
+
+[lists.x.cards.c]
+name = "C"
+complete = true
+"#;
+    let board: rbxtrello::sync::board::VCSBoard = toml::from_str(src).unwrap();
+    let serialized = toml::to_string_pretty(&board).unwrap();
+    let board2: rbxtrello::sync::board::VCSBoard = toml::from_str(&serialized).unwrap();
+    assert!(board2.lists["x"].cards["c"].complete);
+}
+
+#[test]
+fn complete_false_not_serialized() {
+    let src = r#"
+[metadata]
+board_name = "T"
+
+[lists.x]
+name = "X"
+
+[lists.x.cards.c]
+name = "C"
+"#;
+    let board: rbxtrello::sync::board::VCSBoard = toml::from_str(src).unwrap();
+    let serialized = toml::to_string_pretty(&board).unwrap();
+    assert!(
+        !serialized.contains("complete"),
+        "complete = false should be omitted, got:\n{serialized}"
+    );
+}

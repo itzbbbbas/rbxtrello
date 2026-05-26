@@ -38,6 +38,7 @@ pub enum DiffOp {
         name: String,
         desc: String,
         label_slugs: Vec<String>,
+        complete: bool,
     },
     UpdateCard {
         id: String,
@@ -49,6 +50,8 @@ pub enum DiffOp {
         new_desc: String,
         old_label_slugs: Vec<String>,
         new_label_slugs: Vec<String>,
+        old_complete: bool,
+        new_complete: bool,
     },
     ArchiveCard {
         id: String,
@@ -74,8 +77,16 @@ impl DiffOp {
                 list_slug,
                 card_slug,
                 new_name,
+                old_complete,
+                new_complete,
                 ..
-            } => format!("~ card {list_slug}/{card_slug} \"{new_name}\""),
+            } => {
+                let mut s = format!("~ card {list_slug}/{card_slug} \"{new_name}\"");
+                if old_complete != new_complete {
+                    s.push_str(&format!(" (complete: {old_complete} → {new_complete})"));
+                }
+                s
+            }
             DiffOp::ArchiveCard {
                 list_slug, name, ..
             } => format!("- card {list_slug} \"{name}\" (archive orphan)"),
@@ -158,6 +169,7 @@ fn diff_lists_and_cards(local: &VCSBoard, remote: &RemoteSnapshot, ops: &mut Vec
                         name: card.name.clone(),
                         desc: card.desc.clone(),
                         label_slugs: card.labels.clone(),
+                        complete: card.complete,
                     });
                 }
             }
@@ -210,7 +222,10 @@ fn diff_cards_for_list(
             let mut sorted_old = existing.id_labels.clone();
             sorted_old.sort();
 
-            if existing.name != card.name || existing.desc != card.desc || sorted_old != sorted_new
+            if existing.name != card.name
+                || existing.desc != card.desc
+                || sorted_old != sorted_new
+                || existing.due_complete != card.complete
             {
                 ops.push(DiffOp::UpdateCard {
                     id: existing.id.clone(),
@@ -222,6 +237,8 @@ fn diff_cards_for_list(
                     new_desc: card.desc.clone(),
                     old_label_slugs: sorted_old,
                     new_label_slugs: card.labels.clone(),
+                    old_complete: existing.due_complete,
+                    new_complete: card.complete,
                 });
             }
         } else {
@@ -231,6 +248,7 @@ fn diff_cards_for_list(
                 name: card.name.clone(),
                 desc: card.desc.clone(),
                 label_slugs: card.labels.clone(),
+                complete: card.complete,
             });
         }
     }
@@ -368,6 +386,7 @@ mod tests {
                 id_list: "L1".into(),
                 id_labels: vec![],
                 pos: 1.0,
+                due_complete: false,
             }],
         );
 
@@ -420,6 +439,7 @@ mod tests {
                 id_list: "L1".into(),
                 id_labels: vec![],
                 pos: 1.0,
+                due_complete: false,
             }],
         );
 

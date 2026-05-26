@@ -96,6 +96,7 @@ pub async fn run(board_id_override: Option<String>) -> Result<()> {
                     name: card.name,
                     desc: card.desc,
                     labels: label_slugs,
+                    complete: card.due_complete,
                     id: Some(card.id),
                     cover: None,
                     checklists: vec![],

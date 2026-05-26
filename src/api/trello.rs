@@ -104,9 +104,16 @@ pub async fn create_card(
     name: &str,
     desc: &str,
     label_ids: &[String],
+    complete: bool,
 ) -> anyhow::Result<Card> {
     let labels = label_ids.join(",");
-    let mut params: Vec<(&str, &str)> = vec![("idList", list_id), ("name", name), ("desc", desc)];
+    let complete_str = if complete { "true" } else { "false" };
+    let mut params: Vec<(&str, &str)> = vec![
+        ("idList", list_id),
+        ("name", name),
+        ("desc", desc),
+        ("dueComplete", complete_str),
+    ];
     if !label_ids.is_empty() {
         params.push(("idLabels", &labels));
     }
@@ -118,12 +125,15 @@ pub async fn update_card(
     name: &str,
     desc: &str,
     label_ids: &[String],
+    complete: bool,
 ) -> anyhow::Result<Card> {
     let labels = label_ids.join(",");
+    let complete_str = if complete { "true" } else { "false" };
     let params = vec![
         ("name", name),
         ("desc", desc),
         ("idLabels", labels.as_str()),
+        ("dueComplete", complete_str),
     ];
     request(Method::PUT, &format!("/cards/{card_id}"), Some(&params)).await
 }
