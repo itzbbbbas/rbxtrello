@@ -13,7 +13,7 @@ Via [Rokit](https://github.com/rojo-rbx/rokit) (recommended):
 ```toml
 # rokit.toml
 [tools]
-rbxtrello = "itzbbbbas/rbxtrello@0.1.0"
+rbxtrello = "itzbbbbas/rbxtrello@0.2.0"
 ```
 
 ```sh
@@ -83,10 +83,11 @@ managed  = false                    # human-curated; never archive orphans
 
 # Cards — keyed by stable slug; Trello card ID written back inline after sync
 [lists.brainrots.cards.noobini_pizzanini]
-name   = "Noobini Pizzanini"
-desc   = "Common starter brainrot..."   # verbatim markdown
-labels = ["common", "tradable"]
-# id   = "5fab..."                  # filled by sync/pull
+name     = "Noobini Pizzanini"
+desc     = "Common starter brainrot..."   # verbatim markdown
+labels   = ["common", "tradable"]
+complete = true                           # marks Trello's dueComplete badge (default: false, omitted when false)
+# id     = "5fab..."                  # filled by sync/pull
 ```
 
 ---
@@ -119,9 +120,15 @@ rbxtrello sync --auto-confirm
 
 ---
 
-## Limitations (v0.1.0)
+## What's new in v0.2.0
 
-- Card cover images, checklists, and custom fields are declared in schema but not yet pushed by `sync` (planned for v0.2).
+- **`complete` field on cards** — set `complete = true` on a card and `sync` will toggle Trello's `dueComplete` flag (green checkmark badge). Omit or set `false` to clear it. `pull` reads the flag back from remote.
+
+---
+
+## Limitations (v0.2.0)
+
+- Card cover images, checklists, and custom fields are declared in schema but not yet pushed by `sync` (planned for a future release).
 - Single board per toml.
 - No deletion — orphans are archived (Trello-side), recoverable via the board's archive.
 
