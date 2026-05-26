@@ -1,6 +1,6 @@
 [package]
 name = "rbxtrello"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 authors = ["itzbbbbas"]
 description = "Sync a Trello board declaratively from a TOML file. Sibling to rbxmonet."
